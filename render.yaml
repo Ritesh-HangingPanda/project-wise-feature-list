@@ -1,0 +1,20 @@
+# Render blueprint. The PASSKEY is NOT stored here: set it in the Render dashboard.
+services:
+  - type: web
+    name: project-wise-feature-list
+    runtime: node
+    plan: starter            # a persistent disk needs a paid plan; the free plan loses data on restart
+    buildCommand: "echo no build"
+    startCommand: node server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: PASSKEY
+        sync: false          # you enter the value in the dashboard
+      - key: DATA_DIR
+        value: /data
+      - key: ALLOWED_ORIGIN
+        value: https://ritesh-hangingpanda.github.io
+    disk:
+      name: status-data
+      mountPath: /data
+      sizeGB: 1
