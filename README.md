@@ -27,7 +27,10 @@ HRM, MOH, SGS, Zain Attendance, Ithbat-MOIA, Dawami365
 
 ## Status server (optional)
 
-`server.js` is a small Node server with no dependencies. It serves the report and a tiny API:
+The report can save changes for everyone through a small passkey-protected API. There are two interchangeable versions of the same API:
+
+- **`worker.js`** – Cloudflare Worker + KV. Free, no card, data is kept. **Recommended.**
+- **`server.js`** – plain Node server (no dependencies) that stores a JSON file. Needs a host with a persistent disk.
 
 | Endpoint | Access | What it does |
 |---|---|---|
@@ -40,25 +43,25 @@ HRM, MOH, SGS, Zain Attendance, Ithbat-MOIA, Dawami365
 
 The passkey is sent in the `x-passkey` header and checked on the server only. Five wrong attempts from one address lock it out for 10 minutes. The passkey is **never** stored in this repo or in the page.
 
-### Run locally
+### Deploy the Worker (free)
 
 ```bash
-PASSKEY='choose-a-passkey' node server.js
-# open http://localhost:3000
+npm install -g wrangler        # or use npx
+npx wrangler login
+npx wrangler deploy            # creates the KV namespace on first deploy
+npx wrangler secret put PASSKEY   # type the passkey when asked
 ```
 
-### Deploy on Render
+Wrangler prints the Worker address (`https://project-wise-feature-list-api.<you>.workers.dev`).
 
-1. Create a new **Blueprint** from this repo (it reads `render.yaml`).
-2. When asked, enter the `PASSKEY` value in the dashboard.
-3. Deploy. Your report is then at your `https://<name>.onrender.com` address.
+Then edit `config.js`, set `window.API_BASE` to that address, and push. The GitHub Pages report now shares changes, and the first edit in each tab asks for the passkey. The Worker already allows the Pages origin (`ALLOWED_ORIGIN` in `wrangler.toml`).
 
-The data is a JSON file in `DATA_DIR`. Use a persistent disk (the blueprint adds one, which needs a paid Render plan) or a Railway volume, otherwise changes are lost on restart.
+### Run the Node server instead
 
-### Use the server from the GitHub Pages copy
+```bash
+PASSKEY='choose-a-passkey' node server.js    # serves the report and the API on http://localhost:3000
+```
 
-Edit `config.js` and set `window.API_BASE` to your server URL, then push. The server already allows the Pages origin (`ALLOWED_ORIGIN`).
+Set `DATA_DIR` to a persistent disk, otherwise changes are lost on restart.
 
-## Files
-
-- `index.html` – the report (single self-contained file, no build step)
+When the server is not reachable, the report falls back to editing in your own browser only.

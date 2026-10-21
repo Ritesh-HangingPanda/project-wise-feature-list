@@ -1,0 +1,13 @@
+# Cloudflare Worker (free plan). The PASSKEY is NOT stored here: set it with `npx wrangler secret put PASSKEY`.
+name = "project-wise-feature-list-api"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+ALLOWED_ORIGIN = "https://ritesh-hangingpanda.github.io"
+
+# Data store. Wrangler creates this namespace on the first deploy.
+# If your wrangler version asks for an id, run `npx wrangler kv namespace create STATE`
+# and add the printed id as: id = "..."
+[[kv_namespaces]]
+binding = "STATE"
