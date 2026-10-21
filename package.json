@@ -1,9 +1,0 @@
-{
-  "name": "project-wise-feature-list",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Feature status report with a small passkey-protected status server",
-  "main": "server.js",
-  "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=18" }
-}
